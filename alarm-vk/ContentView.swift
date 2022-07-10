@@ -11,27 +11,27 @@ import WidgetKit
 struct ContentView: View {
     
     @AppStorage("AlarmWidget", store: UserDefaults(suiteName: "group.com.clickey.alarm-vk")) var widgetData: Data?
-    @ObservedObject var localNotification = LocalNotification()
+    
     @ObservedObject var viewModel = ViewModel()
-    private let speechRecognizer = SpeechRecognizer()
+    
     @State var isRecord = false
     @State var showSheet = false
     
     @State var openAlarmId = UUID().uuidString
     var body: some View {
-        if (localNotification.notificationData != nil) {
+        if (viewModel.localNotification.notificationData != nil) {
             VStack {
                 Text(viewModel.transcript)
                 QuizView(viewModel: viewModel) {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                         withAnimation {
-                            stop()
+                            viewModel.stop()
                         }
                     }
                 }
                 .transition(.opacity)
                 Button {
-                    isRecord ? speechRecognizer.stopRecording() : speechRecognizer.record(to: $viewModel.transcript)
+                    isRecord ? viewModel.speechRecognizer.stopRecording() : viewModel.speechRecognizer.record(to: $viewModel.transcript)
                     isRecord.toggle()
                 } label: {
                     if isRecord {
@@ -72,7 +72,7 @@ struct ContentView: View {
                         }
                     }
                     Button {
-                        isRecord ? speechRecognizer.stopRecording() : speechRecognizer.record(to: $viewModel.transcript)
+                        isRecord ? viewModel.speechRecognizer.stopRecording() : viewModel.speechRecognizer.record(to: $viewModel.transcript)
                         isRecord.toggle()
                     } label: {
                         if isRecord {
@@ -107,9 +107,6 @@ struct ContentView: View {
                 }
             }
         }
-    }
-    private func stop() {
-        localNotification.notificationData = nil
     }
     private func bestAlarmForWidget() {
         var alarms: [AlarmModel] = []

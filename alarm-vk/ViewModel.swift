@@ -10,8 +10,9 @@ import Combine
 import CoreData
 
 class ViewModel: ObservableObject {
-    
-    private var keywords: [String] = ["Stop", "alarm for"]
+    @ObservedObject var localNotification: LocalNotification
+    public let speechRecognizer = SpeechRecognizer()
+    private var keywords: [String] = ["stop", "alarm for"]
     
     @Published var alarms: [Alarm] = []
     @Published var columns = Array(repeating: GridItem(.flexible(), spacing: 15), count: 3)
@@ -24,25 +25,52 @@ class ViewModel: ObservableObject {
     private var bag = Set<AnyCancellable>()
     
     init() {
+        self.localNotification = LocalNotification()
         fetchAlarms()
         setUpSpeech()
     }
     
     private func setUpSpeech() {
         $transcript
-            .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
+            .debounce(for: .milliseconds(1000), scheduler: DispatchQueue.main)
             .map({ (string) -> String? in
                 return string
             })
-            .compactMap { $0 }
+            .compactMap { $0?.lowercased() }
             .sink(receiveValue: {
                 self.checkKeywords($0)
             }).store(in: &bag)
     }
     
     private func checkKeywords(_ text: String) {
+        
+
+        
         let keywordsFiltered = keywords.filter { text.contains($0) }
-        print(keywordsFiltered.last)
+        if keywordsFiltered.last == "stop" {
+            stop()
+            speechRecognizer.stopRecording()
+        } else if keywordsFiltered.last == "alarm for" && text.filter{Int("\($0)") != nil }.count >= 4 {
+            let nums = text.filter{Int("\($0)") != nil }
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "hhmm"
+            if let date = dateFormatter.date(from: "\(nums)") {
+                addAlarm(time: date, repeats: [
+                    ("Все", true),
+                    ("ПH", true),
+                    ("ВТ", true),
+                    ("СР", true),
+                    ("ЧТ", true),
+                    ("ПТ", true),
+                    ("СБ", true),
+                    ("ВС", true)
+                ])
+            }
+        }
+    }
+    
+    public func stop() {
+        localNotification.notificationData = nil
     }
     
     public func getRandomPokemon() {
