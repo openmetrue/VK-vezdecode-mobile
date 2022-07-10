@@ -10,17 +10,39 @@ import Combine
 import CoreData
 
 class ViewModel: ObservableObject {
+    
+    private var keywords: [String] = ["Stop", "alarm for"]
+    
     @Published var alarms: [Alarm] = []
     @Published var columns = Array(repeating: GridItem(.flexible(), spacing: 15), count: 3)
     @Published var pokemonName: String?
     @Published var pokemonImages: Sprites?
     @Published var pokemonColor: String = ""
     @Published var colors: [String] = []
+    @Published var transcript = ""
     
     private var bag = Set<AnyCancellable>()
     
     init() {
         fetchAlarms()
+        setUpSpeech()
+    }
+    
+    private func setUpSpeech() {
+        $transcript
+            .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
+            .map({ (string) -> String? in
+                return string
+            })
+            .compactMap { $0 }
+            .sink(receiveValue: {
+                self.checkKeywords($0)
+            }).store(in: &bag)
+    }
+    
+    private func checkKeywords(_ text: String) {
+        let keywordsFiltered = keywords.filter { text.contains($0) }
+        print(keywordsFiltered.last)
     }
     
     public func getRandomPokemon() {

@@ -5,136 +5,105 @@
 //  Created by Mark Khmelnitskii on 10.07.2022.
 //
 
+import AVFoundation
+import Foundation
 import Speech
 import SwiftUI
-import Foundation
 
-class SwiftUISpeech: ObservableObject {
-    init() {
-        SFSpeechRecognizer.requestAuthorization{ authStatus in
-            OperationQueue.main.addOperation {
-                switch authStatus {
-                    case .authorized:
-                        break
+struct SpeechRecognizer {
+    private class SpeechAssist {
+        var audioEngine: AVAudioEngine?
+        var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+        var recognitionTask: SFSpeechRecognitionTask?
+        let speechRecognizer = SFSpeechRecognizer()
 
-                    case .denied:
-                        break
-                    
-                    case .restricted:
-                        break
-                      
-                    case .notDetermined:
-                        break
-                      
-                    default:
-                        break
-                }
-            }
+        deinit {
+            reset()
         }
-        
-        recognitionTask?.cancel()
-        self.recognitionTask = nil
 
+        func reset() {
+            recognitionTask?.cancel()
+            audioEngine?.stop()
+            audioEngine = nil
+            recognitionRequest = nil
+            recognitionTask = nil
+        }
     }
-    
-    func startRecording(){// starts the recording sequence
-        
-        // restarts the text
-        outputText = "";
-        
-        // Configure the audio session for the app.
-        let audioSession = AVAudioSession.sharedInstance()
-        let inputNode = audioEngine.inputNode
-        
-        // try catch to start audio session
-        do{
-            try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
-            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-        }catch{
-            print("ERROR: - Audio Session Failed!")
-        }
-        
-        // Configure the microphone input and request auth
-        let recordingFormat = inputNode.outputFormat(forBus: 0)
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
-            self.recognitionRequest?.append(buffer)
-        }
-        
-        audioEngine.prepare()
-        
-        do{
-            try audioEngine.start()
-        }catch{
-            print("ERROR: - Audio Engine failed to start")
-        }
-        
-        // Create and configure the speech recognition request.
-        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        guard let recognitionRequest = recognitionRequest else { fatalError("Unable to create a SFSpeechAudioBufferRecognitionRequest object") }
-        recognitionRequest.shouldReportPartialResults = true
-        
-        // Create a recognition task for the speech recognition session.
-        recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest){ result, error in
-            if (result != nil){
-                self.outputText = (result?.transcriptions[0].formattedString)!
-            }
-            if let result = result{
-                // Update the text view with the results.
-                self.outputText = result.transcriptions[0].formattedString
-            }
-            if error != nil {
-                // Stop recognizing speech if there is a problem.
-                self.audioEngine.stop()
-                inputNode.removeTap(onBus: 0)
-                self.recognitionRequest = nil
-                self.recognitionTask = nil
-                
-            }
-        }
-    }// end of stop recording
-    
-    func stopRecording(){// end recording
-        
-        audioEngine.stop()
-        recognitionRequest?.endAudio()
-        self.audioEngine.inputNode.removeTap(onBus: 0)
-        self.recognitionTask?.cancel()
-        self.recognitionTask = nil
-        
-    }// restarts the variables
-    
-    
-    func getSpeechStatus()->String{// gets the status of authorization
-        
-        switch authStat{
-            
-            case .authorized:
-                return "Authorized"
-            
-            case .notDetermined:
-                return "Not yet Determined"
-            
-            case .denied:
-                return "Denied - Close the App"
-            
-            case .restricted:
-                return "Restricted - Close the App"
-            
-            default:
-                return "ERROR: No Status Defined"
-    
-        }// end of switch
-        
-    }// end of get speech status
-    
-    /* Variables **/
-    @Published var isRecording: Bool = false
-    
-    private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
-    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
-    private let authStat = SFSpeechRecognizer.authorizationStatus()
-    private var recognitionTask: SFSpeechRecognitionTask?
-    private let audioEngine = AVAudioEngine()
-    public var outputText:String = "";
-}
 
+    private let assistant = SpeechAssist()
+
+    func record(to speech: Binding<String>) {
+        relay(speech, message: "Requesting access")
+        canAccess { authorized in
+            guard authorized else {
+                relay(speech, message: "Access denied")
+                return
+            }
+
+            relay(speech, message: "Access granted")
+
+            assistant.audioEngine = AVAudioEngine()
+            guard let audioEngine = assistant.audioEngine else {
+                fatalError("Unable to create audio engine")
+            }
+            assistant.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+            guard let recognitionRequest = assistant.recognitionRequest else {
+                fatalError("Unable to create request")
+            }
+            recognitionRequest.shouldReportPartialResults = true
+
+            do {
+                relay(speech, message: "Booting audio subsystem")
+
+                let audioSession = AVAudioSession.sharedInstance()
+                try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
+                try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+                let inputNode = audioEngine.inputNode
+                relay(speech, message: "Found input node")
+
+                let recordingFormat = inputNode.outputFormat(forBus: 0)
+                inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
+                    recognitionRequest.append(buffer)
+                }
+                relay(speech, message: "Preparing audio engine")
+                audioEngine.prepare()
+                try audioEngine.start()
+                assistant.recognitionTask = assistant.speechRecognizer?.recognitionTask(with: recognitionRequest) { (result, error) in
+                    var isFinal = false
+                    if let result = result {
+                        relay(speech, message: result.bestTranscription.formattedString)
+                        isFinal = result.isFinal
+                    }
+
+                    if error != nil || isFinal {
+                        audioEngine.stop()
+                        inputNode.removeTap(onBus: 0)
+                        self.assistant.recognitionRequest = nil
+                    }
+                }
+            } catch {
+                print("Error transcibing audio: " + error.localizedDescription)
+                assistant.reset()
+            }
+        }
+    }
+    func stopRecording() {
+        assistant.reset()
+    }
+    private func canAccess(withHandler handler: @escaping (Bool) -> Void) {
+        SFSpeechRecognizer.requestAuthorization { status in
+            if status == .authorized {
+                AVAudioSession.sharedInstance().requestRecordPermission { authorized in
+                    handler(authorized)
+                }
+            } else {
+                handler(false)
+            }
+        }
+    }
+    private func relay(_ binding: Binding<String>, message: String) {
+        DispatchQueue.main.async {
+            binding.wrappedValue = message
+        }
+    }
+}

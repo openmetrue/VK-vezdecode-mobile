@@ -11,25 +11,40 @@ import WidgetKit
 struct ContentView: View {
     
     @AppStorage("AlarmWidget", store: UserDefaults(suiteName: "group.com.clickey.alarm-vk")) var widgetData: Data?
-    @ObservedObject var swiftUISpeech = SwiftUISpeech()
     @ObservedObject var localNotification = LocalNotification()
     @ObservedObject var viewModel = ViewModel()
+    private let speechRecognizer = SpeechRecognizer()
+    @State var isRecord = false
     @State var showSheet = false
     
     @State var openAlarmId = UUID().uuidString
     var body: some View {
         if (localNotification.notificationData != nil) {
-            QuizView(viewModel: viewModel) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    withAnimation {
-                        stop()
+            VStack {
+                Text(viewModel.transcript)
+                QuizView(viewModel: viewModel) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        withAnimation {
+                            stop()
+                        }
+                    }
+                }
+                .transition(.opacity)
+                Button {
+                    isRecord ? speechRecognizer.stopRecording() : speechRecognizer.record(to: $viewModel.transcript)
+                    isRecord.toggle()
+                } label: {
+                    if isRecord {
+                        Text("Нажмите чтобы закончить")
+                    } else {
+                        Text("Голосовая команда")
                     }
                 }
             }
-            .transition(.opacity)
         } else {
             NavigationView {
                 VStack {
+                    Text(viewModel.transcript)
                     List {
                         ForEach(viewModel.alarms) { alarmVM in
                             NavigationLink(isActive: Binding(get: {
@@ -56,7 +71,16 @@ struct ContentView: View {
                             }
                         }
                     }
-                   SpeechButton(swiftUISpeech: swiftUISpeech)
+                    Button {
+                        isRecord ? speechRecognizer.stopRecording() : speechRecognizer.record(to: $viewModel.transcript)
+                        isRecord.toggle()
+                    } label: {
+                        if isRecord {
+                            Text("Нажмите чтобы закончить")
+                        } else {
+                            Text("Голосовая команда")
+                        }
+                    }
                 }
                 .toolbar {
                     Button {
