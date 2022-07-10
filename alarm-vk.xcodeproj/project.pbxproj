@@ -56,6 +56,10 @@
 		B4F5F16928797F1200D672FA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B4F5F16828797F1200D672FA /* Preview Assets.xcassets */; };
 		B4F5F1702879835E00D672FA /* AlarmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F5F16F2879835E00D672FA /* AlarmView.swift */; };
 		B4F5F174287989D700D672FA /* CreateAlarmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F5F173287989D700D672FA /* CreateAlarmView.swift */; };
+		B4FCE963287B0A0F00A943FB /* SpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FCE962287B0A0F00A943FB /* SpeechRecognizer.swift */; };
+		B4FCE965287B0B8900A943FB /* SpeechButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FCE964287B0B8900A943FB /* SpeechButton.swift */; };
+		B4FCE966287B0C6000A943FB /* SpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FCE962287B0A0F00A943FB /* SpeechRecognizer.swift */; };
+		B4FCE967287B0C6000A943FB /* SpeechButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FCE964287B0B8900A943FB /* SpeechButton.swift */; };
 		B4FED1D7287A041A00D5B8CC /* AlarmModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FED1D6287A041A00D5B8CC /* AlarmModel.swift */; };
 		B4FED1D8287A048800D5B8CC /* AlarmModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4FED1D6287A041A00D5B8CC /* AlarmModel.swift */; };
 /* End PBXBuildFile section */
@@ -118,6 +122,8 @@
 		B4F5F16828797F1200D672FA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		B4F5F16F2879835E00D672FA /* AlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmView.swift; sourceTree = "<group>"; };
 		B4F5F173287989D700D672FA /* CreateAlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAlarmView.swift; sourceTree = "<group>"; };
+		B4FCE962287B0A0F00A943FB /* SpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognizer.swift; sourceTree = "<group>"; };
+		B4FCE964287B0B8900A943FB /* SpeechButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechButton.swift; sourceTree = "<group>"; };
 		B4FED1D6287A041A00D5B8CC /* AlarmModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -166,6 +172,7 @@
 			isa = PBXGroup;
 			children = (
 				B47D023C2879A42500B9F066 /* LocalNotification.swift */,
+				B4FCE962287B0A0F00A943FB /* SpeechRecognizer.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -233,6 +240,7 @@
 				B4A5449C2879E12E00195E71 /* EditAlarmView.swift */,
 				B4F5F16F2879835E00D672FA /* AlarmView.swift */,
 				B483EB062879AF4700C3614F /* ViewModel.swift */,
+				B4FCE964287B0B8900A943FB /* SpeechButton.swift */,
 				B47D02512879A8C700B9F066 /* Helpers */,
 				B4F5F17728798E4D00D672FA /* Model */,
 				B45280CF287AA7150043A95C /* Network */,
@@ -379,6 +387,8 @@
 				B45280C0287A858B0043A95C /* CoreDataMethodService.swift in Sources */,
 				B45280BB287A85630043A95C /* ContentView.swift in Sources */,
 				B45280C4287A85960043A95C /* CoreDataFetchModel.swift in Sources */,
+				B4FCE966287B0C6000A943FB /* SpeechRecognizer.swift in Sources */,
+				B4FCE967287B0C6000A943FB /* SpeechButton.swift in Sources */,
 				B4D3ED74287AB71D00664BE6 /* PokemonSpeciesModel.swift in Sources */,
 				B45280BE287A85840043A95C /* AlarmView.swift in Sources */,
 				B45280C1287A858E0043A95C /* Model.xcdatamodeld in Sources */,
@@ -408,8 +418,10 @@
 				B4FED1D7287A041A00D5B8CC /* AlarmModel.swift in Sources */,
 				B47D02542879A90600B9F066 /* Model.xcdatamodeld in Sources */,
 				B483EB0D2879BC4400C3614F /* CoreDataFetchModel.swift in Sources */,
+				B4FCE963287B0A0F00A943FB /* SpeechRecognizer.swift in Sources */,
 				B45280D3287AAD820043A95C /* PokemonSpeciesModel.swift in Sources */,
 				B483EB0C2879BC4400C3614F /* CoreDataSaveModel.swift in Sources */,
+				B4FCE965287B0B8900A943FB /* SpeechButton.swift in Sources */,
 				B47D023D2879A42500B9F066 /* LocalNotification.swift in Sources */,
 				B4F5F16228797F0E00D672FA /* alarm_vkApp.swift in Sources */,
 				B45280CC287AA7100043A95C /* API.swift in Sources */,

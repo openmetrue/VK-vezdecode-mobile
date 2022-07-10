@@ -11,7 +11,7 @@ import WidgetKit
 struct ContentView: View {
     
     @AppStorage("AlarmWidget", store: UserDefaults(suiteName: "group.com.clickey.alarm-vk")) var widgetData: Data?
-    
+    @ObservedObject var swiftUISpeech = SwiftUISpeech()
     @ObservedObject var localNotification = LocalNotification()
     @ObservedObject var viewModel = ViewModel()
     @State var showSheet = false
@@ -29,31 +29,34 @@ struct ContentView: View {
             .transition(.opacity)
         } else {
             NavigationView {
-                List {
-                    ForEach(viewModel.alarms) { alarmVM in
-                        NavigationLink(isActive: Binding(get: {
-                            openAlarmId == alarmVM.id ?? UUID().uuidString
-                        }, set: { value in
-                            openAlarmId = value == false ? UUID().uuidString : alarmVM.id!
-                        })) {
-                            EditAlarmView(alarmData: alarmVM) { date, repeats, isActiveAlarm  in
-                                viewModel.editAlarm(alarm: alarmVM, time: date, repeats: repeats, isActive: isActiveAlarm)
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                    bestAlarmForWidget()
+                VStack {
+                    List {
+                        ForEach(viewModel.alarms) { alarmVM in
+                            NavigationLink(isActive: Binding(get: {
+                                openAlarmId == alarmVM.id ?? UUID().uuidString
+                            }, set: { value in
+                                openAlarmId = value == false ? UUID().uuidString : alarmVM.id!
+                            })) {
+                                EditAlarmView(alarmData: alarmVM) { date, repeats, isActiveAlarm  in
+                                    viewModel.editAlarm(alarm: alarmVM, time: date, repeats: repeats, isActive: isActiveAlarm)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                        bestAlarmForWidget()
+                                    }
                                 }
+                            } label: {
+                                AlarmView(alarmData: alarmVM)
                             }
-                        } label: {
-                            AlarmView(alarmData: alarmVM)
+                        }
+                        .onDelete { index in
+                            index.forEach { (i) in
+                                viewModel.deleteAlarm(alarm: viewModel.alarms[i])
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                bestAlarmForWidget()
+                            }
                         }
                     }
-                    .onDelete { index in
-                        index.forEach { (i) in
-                            viewModel.deleteAlarm(alarm: viewModel.alarms[i])
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            bestAlarmForWidget()
-                        }
-                    }
+                   SpeechButton(swiftUISpeech: swiftUISpeech)
                 }
                 .toolbar {
                     Button {
