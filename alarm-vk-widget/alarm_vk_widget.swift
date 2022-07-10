@@ -21,7 +21,7 @@ struct Provider: IntentTimelineProvider {
         let date = Date()
         if let widgetData = widgetData,
            let alarms = try? JSONDecoder().decode([AlarmModel].self, from: widgetData) {
-            let entry = SimpleEntry(date: date, alarmModel: bestDataForWidget(currentDate: date, alarms: alarms).first, configuration: configuration)
+            let entry = SimpleEntry(date: date, alarmModel: bestDataForWidget(currentDate: date, alarms: alarms), configuration: configuration)
             completion(entry)
         } else {
             let entry = SimpleEntry(date: date, alarmModel: nil, configuration: configuration)
@@ -37,7 +37,7 @@ struct Provider: IntentTimelineProvider {
             // Generate a timeline consisting of five entries an hour apart, starting from the current date.
             for hourOffset in 0 ..< 5 {
                 let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: date)!
-                let entry = SimpleEntry(date: entryDate, alarmModel: bestDataForWidget(currentDate: date, alarms: alarms).first, configuration: configuration)
+                let entry = SimpleEntry(date: entryDate, alarmModel: bestDataForWidget(currentDate: date, alarms: alarms), configuration: configuration)
                 entries.append(entry)
             }
             let timeline = Timeline(entries: entries, policy: .after(alarms.first!.date))
@@ -54,36 +54,59 @@ struct Provider: IntentTimelineProvider {
         }
     }
     func bestDataForWidget(currentDate: Date, alarms: [AlarmModel]) -> [AlarmModel] {
-        //        let formatter = DateFormatter()
-        //        formatter.dateFormat = "h:mm"
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MM dd hh mm"
         //MARK: нужно смотреть на дни недели!!!
-        //var bestInterval: TimeInterval = alarms.first!.date.distance(to: currentDate)
-        //var bestAlarm: AlarmModel = alarms.first!
-        //for alarm in alarms {
-//            if alarm.active == true,
-//               alarm.date > currentDate {
-//                let timeInterval = alarm.date.distance(to: currentDate)
-//                if bestInterval <= timeInterval {
-//                    bestInterval = timeInterval
-//                    bestAlarm = alarm
-//                }
-//            }
-        //}
-        let alarms = alarms.filter { $0.active }.sorted { $0.date.distance(to: currentDate) < $1.date.distance(to: currentDate) && $1.date.distance(to: currentDate) > 0 }
-        return alarms
+        let calendar = Calendar.current
+        let weekday = calendar.component(.weekday, from: currentDate)
+        var newAlarms: [AlarmModel] = []
+        for alarm in alarms {
+            if alarm.active == true {
+                for day in alarm.days {
+                    var dayNum: Int? = nil
+                    switch day {
+                    case "ВС":
+                        dayNum = 1
+                    case "ПH":
+                        dayNum = 2
+                    case "ВТ":
+                        dayNum = 3
+                    case "СР":
+                        dayNum = 4
+                    case "ЧТ":
+                        dayNum = 5
+                    case "ПТ":
+                        dayNum = 6
+                    case "СБ":
+                        dayNum = 7
+                    default:
+                        break
+                    }
+                    if let dayNum = dayNum {
+                        let dayToDay = ((7 + dayNum) - weekday) % 7
+                        if let alarmDate = calendar.date(byAdding: .weekOfYear, value: dayToDay, to: alarm.date) {
+                            newAlarms.append(AlarmModel(id: alarm.id, date: alarmDate, active: alarm.active, days: alarm.days))
+                        }
+                    }
+                }
+            }
+        }
+        let alarms = alarms + newAlarms
+        let alNew = alarms.filter { $0.active }
+        return alNew
     }
 }
 
 struct SimpleEntry: TimelineEntry {
     var date: Date
-    let alarmModel: AlarmModel?
+    let alarmModel: [AlarmModel]?
     let configuration: ConfigurationIntent
 }
 
 struct alarm_vk_widgetEntryView : View {
     var entry: Provider.Entry
     var body: some View {
-        if let alarm = entry.alarmModel {
+        if let alarm = bestAlarm(entry.alarmModel) {
             VStack {
                 Text("Следующий будильник: ")
                     .font(.body)
@@ -101,6 +124,10 @@ struct alarm_vk_widgetEntryView : View {
                 .widgetURL(URL(string: "widget://timerID/"))
                 .padding()
         }
+    }
+    func bestAlarm(_ alarms: [AlarmModel]?) -> AlarmModel? {
+        guard let alarms = alarms else { return nil }
+        return alarms.sorted{ $0.date < $1.date }.first(where: { $0.date.timeIntervalSinceNow > 0} )
     }
 }
 

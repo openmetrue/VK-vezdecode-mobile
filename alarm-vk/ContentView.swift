@@ -73,7 +73,6 @@ struct ContentView: View {
                     }
                 }
                 .onAppear {
-                    viewModel.getRandomPokemon()
                     NotificationManager.shared.requestNotificationPermission()
                 }
                 .onOpenURL { url in

@@ -18,7 +18,6 @@
 		B45280C3287A85940043A95C /* CoreDataSaveModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B483EB092879BC4400C3614F /* CoreDataSaveModel.swift */; };
 		B45280C4287A85960043A95C /* CoreDataFetchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B483EB0A2879BC4400C3614F /* CoreDataFetchModel.swift */; };
 		B45280C5287A85990043A95C /* CoreDataDeleteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B483EB0B2879BC4400C3614F /* CoreDataDeleteModel.swift */; };
-		B45280C6287A85A00043A95C /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B483EB212879D51800C3614F /* MusicPlayer.swift */; };
 		B45280C7287A85A30043A95C /* LocalNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = B47D023C2879A42500B9F066 /* LocalNotification.swift */; };
 		B45280CC287AA7100043A95C /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45280C9287AA7100043A95C /* API.swift */; };
 		B45280CD287AA7100043A95C /* Agent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45280CA287AA7100043A95C /* Agent.swift */; };
@@ -34,7 +33,6 @@
 		B483EB0C2879BC4400C3614F /* CoreDataSaveModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B483EB092879BC4400C3614F /* CoreDataSaveModel.swift */; };
 		B483EB0D2879BC4400C3614F /* CoreDataFetchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B483EB0A2879BC4400C3614F /* CoreDataFetchModel.swift */; };
 		B483EB0E2879BC4400C3614F /* CoreDataDeleteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B483EB0B2879BC4400C3614F /* CoreDataDeleteModel.swift */; };
-		B483EB222879D51800C3614F /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B483EB212879D51800C3614F /* MusicPlayer.swift */; };
 		B4A5449D2879E12E00195E71 /* EditAlarmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A5449C2879E12E00195E71 /* EditAlarmView.swift */; };
 		B4A544A52879E82B00195E71 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4A544A42879E82B00195E71 /* WidgetKit.framework */; };
 		B4A544A72879E82B00195E71 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4A544A62879E82B00195E71 /* SwiftUI.framework */; };
@@ -101,7 +99,6 @@
 		B483EB092879BC4400C3614F /* CoreDataSaveModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataSaveModel.swift; sourceTree = "<group>"; };
 		B483EB0A2879BC4400C3614F /* CoreDataFetchModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataFetchModel.swift; sourceTree = "<group>"; };
 		B483EB0B2879BC4400C3614F /* CoreDataDeleteModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataDeleteModel.swift; sourceTree = "<group>"; };
-		B483EB212879D51800C3614F /* MusicPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicPlayer.swift; sourceTree = "<group>"; };
 		B4A5449C2879E12E00195E71 /* EditAlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAlarmView.swift; sourceTree = "<group>"; };
 		B4A544A22879E82B00195E71 /* alarm-vk-widgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "alarm-vk-widgetExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4A544A42879E82B00195E71 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -168,7 +165,6 @@
 		B47D02512879A8C700B9F066 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				B483EB212879D51800C3614F /* MusicPlayer.swift */,
 				B47D023C2879A42500B9F066 /* LocalNotification.swift */,
 			);
 			path = Helpers;
@@ -382,7 +378,6 @@
 				B45280C5287A85990043A95C /* CoreDataDeleteModel.swift in Sources */,
 				B45280C0287A858B0043A95C /* CoreDataMethodService.swift in Sources */,
 				B45280BB287A85630043A95C /* ContentView.swift in Sources */,
-				B45280C6287A85A00043A95C /* MusicPlayer.swift in Sources */,
 				B45280C4287A85960043A95C /* CoreDataFetchModel.swift in Sources */,
 				B4D3ED74287AB71D00664BE6 /* PokemonSpeciesModel.swift in Sources */,
 				B45280BE287A85840043A95C /* AlarmView.swift in Sources */,
@@ -406,7 +401,6 @@
 				B4D3ED79287ACC3A00664BE6 /* QuizView.swift in Sources */,
 				B483EB0E2879BC4400C3614F /* CoreDataDeleteModel.swift in Sources */,
 				B4D3ED76287AC04200664BE6 /* PokemonColorsModel.swift in Sources */,
-				B483EB222879D51800C3614F /* MusicPlayer.swift in Sources */,
 				B4A544B02879E82D00195E71 /* alarm_vk_widget.intentdefinition in Sources */,
 				B483EB072879AF4700C3614F /* ViewModel.swift in Sources */,
 				B483EB032879A9F400C3614F /* CoreDataMethodService.swift in Sources */,
